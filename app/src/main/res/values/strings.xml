@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CoPilotDemo</string>
+    <string name="workout_reps_description">Reps</string>
+    <string name="workout_pounds_description">lbs</string>
+</resources>

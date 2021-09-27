@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="maya_blue">#9CDEFF</color>
+    <color name="fig_purple">#362A50</color>
+    <color name="canary_yellow">#FFBD3B</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <color name="pastel_blue">#DCF6FC</color>
+    <color name="pastel_green">#CEF4DF</color>
+    <color name="pastel_purple">#C3D7FF</color>
+    <color name="pastel_yellow">#FFEAAB</color>
+    <color name="pastel_tomato">#FFBEBE</color>
+    <color name="light_gray">#ECF2FA</color>
+</resources>
