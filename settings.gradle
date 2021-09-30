@@ -8,3 +8,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CoPilotDemo"
 include ':app'
+include ':app:copilotdemo'
+include ':copilotdemo'

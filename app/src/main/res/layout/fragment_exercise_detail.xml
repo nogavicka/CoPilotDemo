@@ -19,15 +19,27 @@
         />
 
     <TextView
-        android:id="@+id/exercise_title"
-        android:layout_width="0dp"
+        android:id="@+id/calorie_burn_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="8dp"
-        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textAppearance="@style/TextStyle"
+        android:drawablePadding="8dp"
+        android:layout_marginTop="16dp"
+        android:text="30"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:drawableStartCompat="@drawable/ic_baseline_local_fire_department_24" />
+
+    <TextView
+        android:id="@+id/heart_rate_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextStyle"
+        android:drawablePadding="8dp"
+        android:text="150"
+        app:layout_constraintTop_toBottomOf="@+id/calorie_burn_title"
+        app:layout_constraintStart_toEndOf="@+id/guideline"
+        app:drawableStartCompat="@drawable/ic_baseline_favorite_24" />
 
     <TextView
         android:id="@+id/exercise_hint"

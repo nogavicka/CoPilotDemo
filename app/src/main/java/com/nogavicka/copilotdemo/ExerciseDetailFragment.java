@@ -42,8 +42,6 @@ public class ExerciseDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_exercise_detail, container, false);
         setUpExoPlayer(view, videoResorceId);
 
-        TextView exerciseTitle = view.findViewById(R.id.exercise_title);
-        exerciseTitle.setText(title);
         TextView exerciseHint = view.findViewById(R.id.exercise_hint);
         exerciseHint.setText(coachHint);
 
