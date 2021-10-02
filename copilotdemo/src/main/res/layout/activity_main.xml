@@ -23,7 +23,7 @@
             android:textAppearance="@style/TextStyle"
             android:drawableStart="@drawable/ic_baseline_local_fire_department_24"
             android:drawablePadding="8dp"
-            android:text="30"/>
+            android:text="--"/>
 
         <TextView
             android:id="@+id/heart_rate_title"
@@ -32,7 +32,7 @@
             android:textAppearance="@style/TextStyle"
             android:drawableStart="@drawable/ic_baseline_favorite_24"
             android:drawablePadding="8dp"
-            android:text="150"/>
+            android:text="--"/>
 
 
     </LinearLayout>

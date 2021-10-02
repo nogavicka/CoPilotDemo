@@ -64,9 +64,12 @@ public class MainActivity extends AppCompatActivity
                     .commit();
     }
 
-    /** Task that starts the companion app on a Wearable that's connected to the phone. */
+    /**
+     * Task that starts the companion app on a Wearable that's connected to the phone.
+     * Note: AsyncTasks were deprecated, but Kotlin offers some awesome lifecycle awareness:
+     * https://developer.android.com/topic/libraries/architecture/coroutines.
+     */
     private class StartWearableActivityTask extends AsyncTask<Void, Void, Void> {
-
         @Override
         protected Void doInBackground(Void... args) {
             Collection<String> nodes = getNodes();
@@ -79,7 +82,6 @@ public class MainActivity extends AppCompatActivity
 
     @WorkerThread
     private void sendStartActivityMessage(String node) {
-
         Task<Integer> sendMessageTask =
                 Wearable.getMessageClient(this).sendMessage(node, START_ACTIVITY_PATH, new byte[0]);
 

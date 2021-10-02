@@ -5,6 +5,10 @@
     <!-- Player application needs to keep the screen from dimming or the processor from sleeping. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <queries>
+        <package android:name="com.google.android.wearable.healthservices" />
+    </queries>
+
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"

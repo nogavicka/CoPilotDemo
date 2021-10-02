@@ -5,8 +5,11 @@ import android.content.Intent;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
-/** Listens to DataItems and Messages from the local node. */
-public class DataLayerListenerService extends WearableListenerService {
+/**
+ * Listens to DataItems and Messages from the local node. This is necessary to start the
+ * app on the watch, if the app is not already running.
+ */
+public class StartActivityListenerService extends WearableListenerService {
     private static final String START_ACTIVITY_PATH = "/start-activity";
 
     @Override
