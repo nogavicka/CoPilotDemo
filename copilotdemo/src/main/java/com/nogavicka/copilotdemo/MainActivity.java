@@ -2,6 +2,7 @@ package com.nogavicka.copilotdemo;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,18 +16,21 @@ import androidx.health.services.client.data.ExerciseCapabilities;
 import androidx.health.services.client.data.ExerciseConfig;
 import androidx.health.services.client.data.ExerciseInfo;
 import androidx.health.services.client.data.ExerciseLapSummary;
-import androidx.health.services.client.data.ExerciseState;
 import androidx.health.services.client.data.ExerciseTrackedStatus;
 import androidx.health.services.client.data.ExerciseType;
 import androidx.health.services.client.data.ExerciseUpdate;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.wearable.Wearable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import com.google.gson.Gson;
 import com.nogavicka.copilotdemo.databinding.ActivityMainBinding;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,6 +39,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
+    private static final String TAG = MainActivity.class.getName();
+
+    private static final String EXERCISE_STATS_PATH = "/exercise-stats";
+    private static final String SOURCE_NODE_ID_EXTRA = "source_node_id";
+
     private ActivityMainBinding binding;
     private TextView calorieBurnTextView;
     private TextView heartRateTextView;
@@ -47,6 +56,9 @@ public class MainActivity extends Activity {
     ExerciseUpdateListener listener;
     // Used for executing Exercise Client events on the background thread.
     ExecutorService executorService;
+    // If the activity is started from a node, this will contain the node ID, so that the app
+    // can report information back.
+    private String source_node_id = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,10 @@ public class MainActivity extends Activity {
         checkHealthServices();
         registerExerciseUpdateListener();
         checkIfOtherAppsAreUsingExerciseClient();
+
+        if (savedInstanceState != null) {
+            source_node_id = savedInstanceState.getString(SOURCE_NODE_ID_EXTRA);
+        }
     }
 
     @Override
@@ -177,18 +193,22 @@ public class MainActivity extends Activity {
                 Map<DataType, List<DataPoint>> latestMetrics = exerciseUpdate.getLatestMetrics();
 
                 List<DataPoint> heartRate = latestMetrics.get(DataType.HEART_RATE_BPM);
+                double heartRateValue = 0;
                 if (heartRate != null) {
-                    double heartRateValue = heartRate.get(0).getValue().asDouble();
+                    heartRateValue = heartRate.get(0).getValue().asDouble();
                     heartRateTextView.setText(
                             String.format(Locale.US, "%.0f", heartRateValue));
+
                 }
 
                 List<DataPoint> totalCalories = latestMetrics.get(DataType.TOTAL_CALORIES);
+                double totalCaloriesValue = 0;
                 if (totalCalories != null) {
+                    totalCaloriesValue = calculateTotalCalories(totalCalories);
                     calorieBurnTextView.setText(
-                            String.format(Locale.US, "%.0f",
-                                    calculateTotalCalories(totalCalories)));
+                            String.format(Locale.US, "%.0f", totalCaloriesValue));
                 }
+                reportExerciseStats(heartRateValue, totalCaloriesValue);
             }
 
             @Override
@@ -196,6 +216,30 @@ public class MainActivity extends Activity {
                 // Do something smart.
             }
         };
+    }
+
+    private void reportExerciseStats(double heartRate, double calorieBurn) {
+        if (source_node_id.isEmpty()) {
+            // Don't report information back.
+            return;
+        }
+        ExerciseStats exerciseStats = new ExerciseStats(heartRate, calorieBurn);
+        // For now, probably the easiest way to pass the complex information back and forth is
+        // to store it in json on both sides and parse it as json on the other side.
+        Gson gson = new Gson();
+        Task<Integer> sendMessageTask =
+                Wearable.getMessageClient(this).sendMessage(
+                        source_node_id, EXERCISE_STATS_PATH,
+                        gson.toJson(exerciseStats).getBytes(StandardCharsets.UTF_8));
+
+        sendMessageTask.addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Message sent successfully");
+                    } else {
+                        Log.d(TAG, "Message failed.");
+                    }
+                });
     }
 
     /** Sums up all the {@code DataPoint}s that were collected in this session. */

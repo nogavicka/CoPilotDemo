@@ -11,6 +11,7 @@ import com.google.android.gms.wearable.WearableListenerService;
  */
 public class StartActivityListenerService extends WearableListenerService {
     private static final String START_ACTIVITY_PATH = "/start-activity";
+    private static final String SOURCE_NODE_ID_EXTRA = "source_node_id";
 
     @Override
     public void onMessageReceived(MessageEvent messageEvent) {
@@ -18,6 +19,9 @@ public class StartActivityListenerService extends WearableListenerService {
         if (messageEvent.getPath().equals(START_ACTIVITY_PATH)) {
             Intent startIntent = new Intent(this, MainActivity.class);
             startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            // Store the node ID that started the activity. This is used for sending data
+            // back to the app from the watch.
+            startIntent.putExtra(SOURCE_NODE_ID_EXTRA, messageEvent.getSourceNodeId());
             startActivity(startIntent);
         }
     }
