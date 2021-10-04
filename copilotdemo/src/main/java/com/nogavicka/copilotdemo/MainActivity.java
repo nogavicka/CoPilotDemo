@@ -75,16 +75,17 @@ public class MainActivity extends Activity {
         checkHealthServices();
         registerExerciseUpdateListener();
         checkIfOtherAppsAreUsingExerciseClient();
-
-        if (savedInstanceState != null) {
-            source_node_id = savedInstanceState.getString(SOURCE_NODE_ID_EXTRA);
-        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         exerciseClient.setUpdateListener(listener);
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            source_node_id = bundle.getString(SOURCE_NODE_ID_EXTRA);
+        }
     }
 
     @Override
@@ -235,7 +236,7 @@ public class MainActivity extends Activity {
         sendMessageTask.addOnCompleteListener(
                 task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "Message sent successfully");
+                        Log.d(TAG, "Message sent successfully: " + gson.toJson(exerciseStats));
                     } else {
                         Log.d(TAG, "Message failed.");
                     }

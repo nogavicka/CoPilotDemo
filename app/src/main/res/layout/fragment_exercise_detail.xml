@@ -19,25 +19,25 @@
         />
 
     <TextView
-        android:id="@+id/calorie_burn_title"
+        android:id="@+id/calorie_burn_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextStyle"
         android:drawablePadding="8dp"
         android:layout_marginTop="16dp"
-        android:text="30"
+        android:text="--"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:drawableStartCompat="@drawable/ic_baseline_local_fire_department_24" />
 
     <TextView
-        android:id="@+id/heart_rate_title"
+        android:id="@+id/heart_rate_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextStyle"
         android:drawablePadding="8dp"
-        android:text="150"
-        app:layout_constraintTop_toBottomOf="@+id/calorie_burn_title"
+        android:text="--"
+        app:layout_constraintTop_toBottomOf="@+id/calorie_burn_text"
         app:layout_constraintStart_toEndOf="@+id/guideline"
         app:drawableStartCompat="@drawable/ic_baseline_favorite_24" />
 

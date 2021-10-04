@@ -15,18 +15,24 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.RawResourceDataSource;
+import com.google.android.gms.wearable.MessageClient;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Wearable;
+import com.google.gson.Gson;
+
+import java.util.Locale;
 
 /**  Fragment that displays the exercise video and other details. */
-public class ExerciseDetailFragment extends Fragment {
+public class ExerciseDetailFragment extends Fragment implements
+        MessageClient.OnMessageReceivedListener {
 
     private final SimpleExoPlayer player;
     private final int videoResorceId;
-    private final String title;
     private final String coachHint;
+    private View view;
 
-    public ExerciseDetailFragment(SimpleExoPlayer player, String title, String coachHint, int videoResorceId) {
+    public ExerciseDetailFragment(SimpleExoPlayer player, String coachHint, int videoResorceId) {
         this.player = player;
-        this.title = title;
         this.coachHint = coachHint;
         this.videoResorceId = videoResorceId;
     }
@@ -39,13 +45,27 @@ public class ExerciseDetailFragment extends Fragment {
     @Override
     public View onCreateView(
             @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_exercise_detail, container, false);
+        view = inflater.inflate(R.layout.fragment_exercise_detail, container, false);
         setUpExoPlayer(view, videoResorceId);
 
         TextView exerciseHint = view.findViewById(R.id.exercise_hint);
         exerciseHint.setText(coachHint);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Instantiates clients without member variables, as clients are inexpensive to create and
+        // won't lose their listeners. (They are cached and shared between GoogleApi instances.)
+        Wearable.getMessageClient(getContext()).addListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Wearable.getMessageClient(getContext()).removeListener(this);
     }
 
     /** Sets up Exo Player for looping the workout video. */
@@ -68,5 +88,19 @@ public class ExerciseDetailFragment extends Fragment {
         player.prepare();
         // Start the playback.
         player.setPlayWhenReady(true);
+    }
+
+    @Override
+    public void onMessageReceived(@NonNull MessageEvent messageEvent) {
+        byte[] data = messageEvent.getData();
+        String dataString = new String(data);
+        Gson gson = new Gson();
+        ExerciseStats exerciseStats = gson.fromJson(dataString, ExerciseStats.class);
+
+        TextView heartRateView = view.findViewById(R.id.heart_rate_text);
+        heartRateView.setText(String.format(Locale.US, "%.0f", exerciseStats.heartRate));
+        TextView calorieBurnView = view.findViewById(R.id.calorie_burn_text);
+        calorieBurnView.setText(String.format(Locale.US, "%.0f", exerciseStats.calorieBurn));
+
     }
 }
